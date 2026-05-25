@@ -21,7 +21,6 @@ public class ViewBookEmployee extends JFrame {
     private final JButton    btnBack   = new JButton("Kembali");
 
     private final ControllerBook ctrl = new ControllerBook();
-    private TableRowSorter<ModelTableBook> sorter;
     private final int idRack;
     private final String rackName;
     boolean isMgr = SessionManager.getInstance().isManager();
@@ -102,15 +101,13 @@ public class ViewBookEmployee extends JFrame {
 
     public void loadBook() {
         ctrl.loadByRack(idRack, tableBook);
-        SwingUtilities.invokeLater(() -> {
-            if (tableBook.getRowSorter() instanceof TableRowSorter) {
-                sorter = (TableRowSorter<ModelTableBook>) tableBook.getRowSorter();
-            }
-        });
     }
 
     private void applyFilter() {
-        if (sorter == null) return;
+        if (!(tableBook.getRowSorter() instanceof TableRowSorter)) return;
+        @SuppressWarnings("unchecked")
+        TableRowSorter<ModelTableBook> sorter =
+            (TableRowSorter<ModelTableBook>) tableBook.getRowSorter();
         String t = tfSearch.getText().trim();
         sorter.setRowFilter(t.isEmpty() ? null :
             RowFilter.regexFilter("(?i)" + Pattern.quote(t)));
